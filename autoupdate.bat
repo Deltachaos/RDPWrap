@@ -7,7 +7,7 @@ REM -------------------------------------------------------------------
 REM
 REM                        autoupdate.bat
 REM
-REM Automatic RDP Wrapper installer and updater // asmtron (07-09-2019)
+REM Automatic RDP Wrapper installer and updater // asmtron (16-08-2019)
 REM -------------------------------------------------------------------
 REM Options:
 REM   -log        = redirect display output to the file autoupdate.log
@@ -27,7 +27,9 @@ REM { Special thak to binarymaster, saurav-biswas and all other contributors }
 REM -----------------------------------------
 REM Location of new/updated rdpwrap.ini files
 REM -----------------------------------------
-set rdpwrap_ini_update_github_1="https://raw.githubusercontent.com/SobieskiCodes/RDPWrap/master/rdpwrap.ini"
+set rdpwarp_ini_update_github_1="https://raw.githubusercontent.com/SobieskiCodes/RDPWrap/master/rdpwrap.ini"
+set rdpwrap_ini_update_github_2="https://raw.githubusercontent.com/asmtron/rdpwrap/master/res/rdpwrap.ini"
+set rdpwrap_ini_update_github_3="https://raw.githubusercontent.com/saurav-biswas/rdpwrap-1/patch-1/res/rdpwrap.ini"
 REM set rdpwrap_ini_update_github_3="https://raw.githubusercontent.com/....Extra.3...."
 REM set rdpwrap_ini_update_github_4="https://raw.githubusercontent.com/....Extra.4...."
 
@@ -50,7 +52,7 @@ if not %errorlevel% == 0 goto :not_admin
 REM check for arguments
 if /i "%~1"=="-log" (
     echo %autoupdate_bat% output from %date% at %time% > %autoupdate_log%
-    call %autoupdate_bat% >> %autoupdate_log%
+    call %autoupdate_bat% -force >> %autoupdate_log%
     goto :finish
 )
 if /i "%~1"=="-taskadd" (
@@ -63,12 +65,18 @@ if /i "%~1"=="-taskremove" (
     schtasks /delete /f /tn "RDP Wrapper Autoupdate"
     goto :finish
 )
+if /i "%~1"=="-force" (
+    echo [-] Force install.
+    call :start_check
+    goto :install
+)
 if /i not "%~1"=="" (
     echo [x] Unknown argument specified: "%~1"
     echo [*] Supported argments/options are:
     echo     -log         =  redirect display output to the file autoupdate.log
     echo     -taskadd     =  add autorun of autoupdate.bat on startup in the schedule task
     echo     -taskremove  =  remove autorun of autoupdate.bat on startup in the schedule task
+    echo     -force       =  force reinstall
     goto :finish
 )
 REM check if file "RDPWInst.exe" exist
